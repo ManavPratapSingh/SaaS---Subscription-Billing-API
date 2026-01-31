@@ -27,6 +27,8 @@ public class EmailService {
      */
     @Async
     public void sendSubscriptionActivationEmail(User user, Subscription subscription, Plan plan) {
+        log.info("Starting to send subscription activation email to: {}", user.getEmail());
+
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -35,12 +37,16 @@ public class EmailService {
             helper.setSubject("Subscription Activated Successfully! 🎉");
             helper.setText(buildActivationEmailContent(user, subscription, plan), true);
 
+            log.info("Email message prepared, attempting to send...");
             mailSender.send(message);
-            log.info("Subscription activation email sent to: {}", user.getEmail());
+            log.info("✅ Subscription activation email sent successfully to: {}", user.getEmail());
 
         } catch (MessagingException e) {
-            log.error("Failed to send subscription activation email to: {}", user.getEmail(), e);
-            // Don't throw exception - email failure shouldn't fail payment
+            log.error("❌ MessagingException - Failed to send email to: {}", user.getEmail(), e);
+            log.error("Error details: {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("❌ Unexpected error sending email to: {}", user.getEmail(), e);
+            log.error("Error type: {}, Message: {}", e.getClass().getName(), e.getMessage());
         }
     }
 
