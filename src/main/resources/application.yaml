@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: SaaS - Subscription and Billing API
+  datasource:
+    url: jdbc:postgresql://localhost:5432/subscription_db
+    username: postgres
+    password: ${db_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:mySecretKeyForJWTTokenGenerationAndValidationPurpose12345}
+  expiration: 86400000  # 24 hours in milliseconds
