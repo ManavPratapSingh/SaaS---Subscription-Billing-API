@@ -1,5 +1,6 @@
 package com.project.SaaS.subscription_billing_api.controller;
 
+import com.project.SaaS.subscription_billing_api.annotation.RateLimit;
 import com.project.SaaS.subscription_billing_api.dto.InvoiceResponse;
 import com.project.SaaS.subscription_billing_api.dto.PaymentResponse;
 import com.project.SaaS.subscription_billing_api.security.JwtUtil;
@@ -23,6 +24,7 @@ public class PaymentController {
     private final JwtUtil jwtUtil;
 
     @PostMapping(value = "/process", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RateLimit
     public ResponseEntity<PaymentResponse> processPayment(
             @RequestParam("subscriptionId") Long subscriptionId,
             @RequestPart(value = "receipt", required = false) org.springframework.web.multipart.MultipartFile receiptFile) {

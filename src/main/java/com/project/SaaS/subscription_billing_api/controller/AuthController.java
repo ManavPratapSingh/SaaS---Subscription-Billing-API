@@ -1,5 +1,6 @@
 package com.project.SaaS.subscription_billing_api.controller;
 
+import com.project.SaaS.subscription_billing_api.annotation.RateLimit;
 import com.project.SaaS.subscription_billing_api.dto.AuthResponse;
 import com.project.SaaS.subscription_billing_api.dto.LoginRequest;
 import com.project.SaaS.subscription_billing_api.dto.RegisterRequest;
@@ -29,6 +30,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
+    @RateLimit
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         User user = userService.registerUser(registerRequest);
 
@@ -40,6 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @RateLimit
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
         // Authenticate user
         Authentication authentication = authenticationManager.authenticate(

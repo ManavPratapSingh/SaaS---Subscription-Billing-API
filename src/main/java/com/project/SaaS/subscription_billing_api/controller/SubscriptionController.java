@@ -1,5 +1,6 @@
 package com.project.SaaS.subscription_billing_api.controller;
 
+import com.project.SaaS.subscription_billing_api.annotation.RateLimit;
 import com.project.SaaS.subscription_billing_api.dto.CreateSubscriptionRequest;
 import com.project.SaaS.subscription_billing_api.dto.SubscriptionResponse;
 import com.project.SaaS.subscription_billing_api.service.SubscriptionService;
@@ -20,6 +21,7 @@ public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
     @PostMapping
+    @RateLimit
     public ResponseEntity<SubscriptionResponse> createSubscription(
             @Valid @RequestBody CreateSubscriptionRequest request) {
 
