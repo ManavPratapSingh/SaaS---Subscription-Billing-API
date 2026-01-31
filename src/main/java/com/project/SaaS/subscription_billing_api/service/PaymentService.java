@@ -27,6 +27,7 @@ public class PaymentService {
     private final SubscriptionRepository subscriptionRepository;
     private final com.project.SaaS.subscription_billing_api.repository.PaymentReceiptRepository paymentReceiptRepository;
     private final FileStorageService fileStorageService;
+    private final EmailService emailService;
     private final Random random = new Random();
 
     /**
@@ -79,6 +80,17 @@ public class PaymentService {
             subscription.setEndDate(endDate);
 
             subscriptionRepository.save(subscription);
+
+            // Send activation email
+            try {
+                emailService.sendSubscriptionActivationEmail(
+                        subscription.getUser(),
+                        subscription,
+                        subscription.getPlan());
+            } catch (Exception e) {
+                log.error("Failed to send activation email, but payment was successful", e);
+                // Don't fail the payment if email fails
+            }
 
             message = "Payment processed successfully. Subscription is now ACTIVE.";
             log.info("Payment successful for subscription: {} with transaction: {}", subscriptionId, transactionId);
