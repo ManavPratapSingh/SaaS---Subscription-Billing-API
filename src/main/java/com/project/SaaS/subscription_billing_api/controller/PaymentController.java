@@ -2,11 +2,9 @@ package com.project.SaaS.subscription_billing_api.controller;
 
 import com.project.SaaS.subscription_billing_api.dto.InvoiceResponse;
 import com.project.SaaS.subscription_billing_api.dto.PaymentResponse;
-import com.project.SaaS.subscription_billing_api.dto.ProcessPaymentRequest;
 import com.project.SaaS.subscription_billing_api.security.JwtUtil;
 import com.project.SaaS.subscription_billing_api.service.PaymentService;
 import com.project.SaaS.subscription_billing_api.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +22,12 @@ public class PaymentController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    @PostMapping("/process")
+    @PostMapping(value = "/process", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PaymentResponse> processPayment(
-            @Valid @RequestBody ProcessPaymentRequest request) {
+            @RequestParam("subscriptionId") Long subscriptionId,
+            @RequestPart(value = "receipt", required = false) org.springframework.web.multipart.MultipartFile receiptFile) {
 
-        PaymentResponse response = paymentService.processMockPayment(request.getSubscriptionId());
+        PaymentResponse response = paymentService.processMockPayment(subscriptionId, receiptFile);
 
         if (response.getStatus().toString().equals("SUCCESS")) {
             return ResponseEntity.ok(response);
