@@ -4,6 +4,7 @@ import com.project.SaaS.subscription_billing_api.dto.PlanResponse;
 import com.project.SaaS.subscription_billing_api.entity.Plan;
 import com.project.SaaS.subscription_billing_api.repository.PlanRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ public class PlanService {
 
     private final PlanRepository planRepository;
 
+    @Cacheable(value = "plans", key = "'allPlans'")
     public List<PlanResponse> getAllPlans() {
         return planRepository.findAll().stream()
                 .map(this::mapToPlanResponse)
