@@ -25,13 +25,16 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final com.project.SaaS.subscription_billing_api.repository.PaymentReceiptRepository paymentReceiptRepository;
+    private final FileStorageService fileStorageService;
     private final Random random = new Random();
 
     /**
      * Process mock payment for a subscription.
      * Simulates success (70%) or failure (30%).
      */
-    public PaymentResponse processMockPayment(Long subscriptionId) {
+    public PaymentResponse processMockPayment(Long subscriptionId,
+            org.springframework.web.multipart.MultipartFile receiptFile) {
         // Fetch subscription
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
                 .orElseThrow(() -> new RuntimeException("Subscription not found with id: " + subscriptionId));
@@ -58,6 +61,11 @@ public class PaymentService {
                 .build();
 
         Payment savedPayment = paymentRepository.save(payment);
+
+        // Save receipt file if provided
+        if (receiptFile != null && !receiptFile.isEmpty()) {
+            savePaymentReceipt(savedPayment, receiptFile);
+        }
 
         String message;
 
@@ -170,5 +178,33 @@ public class PaymentService {
         invoice.append("========================================\n");
 
         return invoice.toString();
+    }
+
+    /**
+     * Save payment receipt file.
+     */
+    private void savePaymentReceipt(Payment payment, org.springframework.web.multipart.MultipartFile file) {
+        try {
+            // Store file
+            String storedFilename = fileStorageService.storeFile(file, "receipt-" + payment.getId());
+            String filePath = fileStorageService.getFilePath(storedFilename);
+
+            // Create receipt record
+            com.project.SaaS.subscription_billing_api.entity.PaymentReceipt receipt = com.project.SaaS.subscription_billing_api.entity.PaymentReceipt
+                    .builder()
+                    .payment(payment)
+                    .originalFilename(file.getOriginalFilename())
+                    .storedFilename(storedFilename)
+                    .filePath(filePath)
+                    .fileSize(file.getSize())
+                    .build();
+
+            paymentReceiptRepository.save(receipt);
+            log.info("Payment receipt saved for payment ID: {}", payment.getId());
+
+        } catch (Exception e) {
+            log.error("Failed to save payment receipt for payment ID: {}", payment.getId(), e);
+            // Don't fail the payment if receipt upload fails
+        }
     }
 }
