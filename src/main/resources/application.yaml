@@ -18,6 +18,17 @@ spring:
       enabled: true
       max-file-size: 5MB
       max-request-size: 5MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 # JWT Configuration
 jwt:
@@ -27,3 +38,7 @@ jwt:
 # File Upload Configuration
 file:
   upload-dir: uploads/receipts
+
+# Rate Limiting Configuration
+rate-limit:
+  requests-per-minute: 100
