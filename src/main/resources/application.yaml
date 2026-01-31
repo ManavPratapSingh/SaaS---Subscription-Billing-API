@@ -29,6 +29,12 @@ spring:
           auth: true
           starttls:
             enable: true
+  cache:
+    type: redis
+  data:
+    redis:
+          host: localhost
+          port: 6379
 
 # JWT Configuration
 jwt:
@@ -44,13 +50,6 @@ rate-limit:
   requests-per-minute: 100
 
 # Redis Configuration
-spring:
-  cache:
-    type: redis
-  data:
-    redis:
-      host: localhost
-      port: 6379
 
 # Cache TTL Configuration (in seconds)
 cache:
