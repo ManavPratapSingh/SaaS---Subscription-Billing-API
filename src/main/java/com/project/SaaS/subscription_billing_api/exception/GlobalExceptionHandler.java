@@ -20,130 +20,145 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthenticationException(
-            AuthenticationException ex,
-            HttpServletRequest request) {
+        @ExceptionHandler(AuthenticationException.class)
+        public ResponseEntity<ErrorResponse> handleAuthenticationException(
+                        AuthenticationException ex,
+                        HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.UNAUTHORIZED.value(),
-                "Unauthorized",
-                ex.getMessage(),
-                request.getRequestURI());
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.UNAUTHORIZED.value(),
+                                "Unauthorized",
+                                ex.getMessage(),
+                                request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-    }
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
 
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentialsException(
-            BadCredentialsException ex,
-            HttpServletRequest request) {
+        @ExceptionHandler(BadCredentialsException.class)
+        public ResponseEntity<ErrorResponse> handleBadCredentialsException(
+                        BadCredentialsException ex,
+                        HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.UNAUTHORIZED.value(),
-                "Unauthorized",
-                "Invalid username or password",
-                request.getRequestURI());
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.UNAUTHORIZED.value(),
+                                "Unauthorized",
+                                "Invalid username or password",
+                                request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-    }
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(
-            UsernameNotFoundException ex,
-            HttpServletRequest request) {
+        @ExceptionHandler(UsernameNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(
+                        UsernameNotFoundException ex,
+                        HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.UNAUTHORIZED.value(),
-                "Unauthorized",
-                ex.getMessage(),
-                request.getRequestURI());
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.UNAUTHORIZED.value(),
+                                "Unauthorized",
+                                ex.getMessage(),
+                                request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-    }
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(
-            AccessDeniedException ex,
-            HttpServletRequest request) {
+        @ExceptionHandler(AccessDeniedException.class)
+        public ResponseEntity<ErrorResponse> handleAccessDeniedException(
+                        AccessDeniedException ex,
+                        HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.FORBIDDEN.value(),
-                "Forbidden",
-                "Access denied: " + ex.getMessage(),
-                request.getRequestURI());
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.FORBIDDEN.value(),
+                                "Forbidden",
+                                "Access denied: " + ex.getMessage(),
+                                request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
-    }
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+        }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleRuntimeException(
-            RuntimeException ex,
-            HttpServletRequest request) {
+        @ExceptionHandler(RuntimeException.class)
+        public ResponseEntity<ErrorResponse> handleRuntimeException(
+                        RuntimeException ex,
+                        HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                "Bad Request",
-                ex.getMessage(),
-                request.getRequestURI());
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                "Bad Request",
+                                ex.getMessage(),
+                                request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationExceptions(
-            MethodArgumentNotValidException ex,
-            HttpServletRequest request) {
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<Map<String, Object>> handleValidationExceptions(
+                        MethodArgumentNotValidException ex,
+                        HttpServletRequest request) {
 
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
+                Map<String, String> errors = new HashMap<>();
+                ex.getBindingResult().getAllErrors().forEach((error) -> {
+                        String fieldName = ((FieldError) error).getField();
+                        String errorMessage = error.getDefaultMessage();
+                        errors.put(fieldName, errorMessage);
+                });
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", HttpStatus.BAD_REQUEST.value());
-        response.put("error", "Validation Failed");
-        response.put("errors", errors);
-        response.put("path", request.getRequestURI());
+                Map<String, Object> response = new HashMap<>();
+                response.put("timestamp", LocalDateTime.now());
+                response.put("status", HttpStatus.BAD_REQUEST.value());
+                response.put("error", "Validation Failed");
+                response.put("errors", errors);
+                response.put("path", request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-    }
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
 
-    @ExceptionHandler(DuplicateActiveSubscriptionException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateActiveSubscriptionException(
-            DuplicateActiveSubscriptionException ex,
-            HttpServletRequest request) {
+        @ExceptionHandler(DuplicateActiveSubscriptionException.class)
+        public ResponseEntity<ErrorResponse> handleDuplicateActiveSubscriptionException(
+                        DuplicateActiveSubscriptionException ex,
+                        HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                "Duplicate Active Subscription",
-                ex.getMessage(),
-                request.getRequestURI());
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                "Duplicate Active Subscription",
+                                ex.getMessage(),
+                                request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
 
-    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
-    public ResponseEntity<ErrorResponse> handleOptimisticLockingFailureException(
-            ObjectOptimisticLockingFailureException ex,
-            HttpServletRequest request) {
+        @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+        public ResponseEntity<ErrorResponse> handleOptimisticLockingFailureException(
+                        ObjectOptimisticLockingFailureException ex,
+                        HttpServletRequest request) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.CONFLICT.value(),
-                "Conflict",
-                "The resource was modified by another request. Please try again.",
-                request.getRequestURI());
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.CONFLICT.value(),
+                                "Conflict",
+                                "The resource was modified by another request. Please try again.",
+                                request.getRequestURI());
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
-    }
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
+        }
+
+        @ExceptionHandler(RateLimitExceededException.class)
+        public ResponseEntity<ErrorResponse> handleRateLimitExceeded(
+                        RateLimitExceededException ex,
+                        HttpServletRequest request) {
+
+                ErrorResponse errorResponse = new ErrorResponse(
+                                LocalDateTime.now(),
+                                HttpStatus.TOO_MANY_REQUESTS.value(),
+                                "Too Many Requests",
+                                ex.getMessage(),
+                                request.getRequestURI());
+
+                return new ResponseEntity<>(errorResponse, HttpStatus.TOO_MANY_REQUESTS);
+        }
 }
