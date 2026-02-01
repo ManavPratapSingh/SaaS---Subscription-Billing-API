@@ -6,6 +6,14 @@ import com.project.SaaS.subscription_billing_api.dto.PaymentResponse;
 import com.project.SaaS.subscription_billing_api.security.JwtUtil;
 import com.project.SaaS.subscription_billing_api.service.PaymentService;
 import com.project.SaaS.subscription_billing_api.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +25,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
+@Tag(name = "Payments", description = "Payment processing and invoice management endpoints")
+@SecurityRequirement(name = "bearerAuth")
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -25,9 +35,16 @@ public class PaymentController {
 
     @PostMapping(value = "/process", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     @RateLimit
+    @Operation(summary = "Process a payment", description = "Processes a mock payment for a subscription with optional receipt upload")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Payment processed successfully", content = @Content(schema = @Schema(implementation = PaymentResponse.class))),
+            @ApiResponse(responseCode = "402", description = "Payment required - payment processing failed", content = @Content(schema = @Schema(implementation = PaymentResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing JWT token", content = @Content),
+            @ApiResponse(responseCode = "429", description = "Too many requests - rate limit exceeded", content = @Content)
+    })
     public ResponseEntity<PaymentResponse> processPayment(
-            @RequestParam("subscriptionId") Long subscriptionId,
-            @RequestPart(value = "receipt", required = false) org.springframework.web.multipart.MultipartFile receiptFile) {
+            @Parameter(description = "ID of the subscription to process payment for", required = true) @RequestParam("subscriptionId") Long subscriptionId,
+            @Parameter(description = "Payment receipt file (optional, max 5MB)") @RequestPart(value = "receipt", required = false) org.springframework.web.multipart.MultipartFile receiptFile) {
 
         PaymentResponse response = paymentService.processMockPayment(subscriptionId, receiptFile);
 
@@ -39,6 +56,11 @@ public class PaymentController {
     }
 
     @GetMapping("/my-invoices")
+    @Operation(summary = "Get my invoices", description = "Retrieves all invoices for the authenticated user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Invoices retrieved successfully", content = @Content(schema = @Schema(implementation = InvoiceResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Invalid or missing JWT token", content = @Content)
+    })
     public ResponseEntity<List<InvoiceResponse>> getMyInvoices(HttpServletRequest request) {
         // Extract user from JWT token
         String token = extractTokenFromRequest(request);
