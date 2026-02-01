@@ -57,3 +57,14 @@ cache:
     plans: 3600          # 1 hour
     users: 1800          # 30 minutes
     subscriptions: 300   # 5 minutes
+
+# Swagger/OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+    try-it-out-enabled: true
+    display-request-duration: true
